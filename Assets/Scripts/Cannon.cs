@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class Cannon : MonoBehaviour
 {
-    [SerializeField] Transform muzzle;              // 총구.
-    [SerializeField] float fireRate;                // 연사 속도.
-    [SerializeField] float fireSpeed;               // 속도.
-    [SerializeField] float moveSpeed;               // 나의 이동 소곧.
+    enum WEAPON
+    {
+        Single, // 한 줄기
+        Double, // 두 줄기
+        Radial, // 방사 형태
+    }
 
-    float fireTime = 0.0f;
+    [SerializeField] float moveSpeed;               // 나의 이동 소곧.
+    [SerializeField] Transform weaponPivot;         // 무기가 있어야할 위치(=기준점)
+    [SerializeField] Weapon weapon;                 // 컴포넌트를 통해 전달하는 무기.
+    Weapon currentWeapon;                           // 실제 내가 들고 있는 무기.
 
     private void Update()
     {
@@ -17,21 +22,21 @@ public class Cannon : MonoBehaviour
         float y = Input.GetAxisRaw("Vertical");
         transform.position += Vector3.up * moveSpeed * y * Time.deltaTime;
 
-        // 스페이스바를 눌렀을 때 발사한다.
-        // || (OR연산자)  : 양쪽 중에 하나라도 참이면 참이다.
-        // && (AND연산자) : 양쪽 전부 참이면 참이다.
-        fireTime -= Time.deltaTime;
+        if (weapon != null)                     // weapon이 null이 아닐 경우.
+        {            
+            if (currentWeapon != weapon)        // 현재 무기와 weapon이 다를 경우.
+            {
+                currentWeapon = weapon;         // 현재 무기를 weapon으로 대입.
+                currentWeapon.Init();           // 현재 무기를 초기화.
+            }
 
-        // 스페이스 키를 누르고 있으면서 fireTime의 값이 0.0f보다 작을 경우.
-        if(Input.GetKey(KeyCode.Space) && fireTime <= 0.0f)
+            currentWeapon.Using(weaponPivot);   // 현재 무기에게 사용중임을 알림.
+            if (Input.GetKey(KeyCode.Z))        // 특정 키를 입력하면
+                currentWeapon.Fire();           // Fire함수 호출.
+        }
+        else                                    // weapon이 null이라면.
         {
-            fireTime = fireRate;
-
-            Projectile projectile = BulletStorage.Instance.GetPool();   // 오브젝트 풀링을 구현한 저장소에서 하나를 빌려온다.
-            projectile.transform.position = muzzle.position;            // muzzle의 위치값 복사.
-            projectile.transform.rotation= muzzle.rotation;             // muzzle의 회전값 복사.
-            projectile.Setup(fireSpeed);
+            currentWeapon = null;               // 현재 무기를 null로 대입.
         }
     }
-
 }
