@@ -23,6 +23,7 @@ public class Projectile : MonoBehaviour
     float destroyTime;          // 삭제되는 시간.
     Vector3 createPosition;     // 생성된 위치 (world)
     float moveSpeed;            // 이동 속도.
+    int power;
 
     // 반환형이 없고 Projectile을 매개변수로 받는 함수.
     public event Action<Projectile> onReturnStorage;     // 저장소로 돌아가는 이벤트 델리게이트.
@@ -65,8 +66,9 @@ public class Projectile : MonoBehaviour
     }
 
     // Cannon에서 탄환을 만든 후 Setup을 통해서 초기 값을 전달한다.
-    public void Setup(float moveSpeed)
+    public void Setup(int power, float moveSpeed)
     {
+        this.power = power;
         this.moveSpeed = moveSpeed;     // 매개변수 moveSpeed를 멤버변수 moveSpeed에 대입한다.
     }
 
@@ -80,6 +82,8 @@ public class Projectile : MonoBehaviour
         if(tag == "Enemy")
         {
             // .......
+            Enemy target = collision.GetComponent<Enemy>();
+            target.OnDamaged(power);
             onReturnStorage?.Invoke(this);
         }
     }

@@ -1,11 +1,22 @@
 using UnityEngine;
 
+public enum WEAPON
+{
+    Single, // 한 줄기
+    Double, // 두 줄기
+    Radial, // 방사 형태
+}
+
 public class Weapon : MonoBehaviour
 {
-    [SerializeField] protected float fireDelay;     // 딜레이 타임.
+    [SerializeField] protected WEAPON type;
     [SerializeField] protected float fireRate;      // 연사 속도.
     [SerializeField] protected float bulletSpeed;   // 총알 속도.
+    [SerializeField] protected int power;           // 총알 공격력.
     [SerializeField] protected Transform[] pivots;  // 중심점 배열.
+
+    public WEAPON Type => type;
+    protected float fireDelay;     // 딜레이 타임.
 
     // 추상 메서드.
     // 1.실제 구현부가 없다.
@@ -33,7 +44,7 @@ public class Weapon : MonoBehaviour
                 Projectile bullet = BulletStorage.Instance.GetPool();
                 bullet.transform.position = pivot.transform.position;
                 bullet.transform.rotation = pivot.transform.rotation;
-                bullet.Setup(bulletSpeed);
+                bullet.Setup(power, bulletSpeed);
             }
         }
     }
