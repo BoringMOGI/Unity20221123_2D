@@ -31,10 +31,12 @@ public class Projectile : MonoBehaviour
     // 일정 시간 후에 사라진다.    
     private void Start()
     {
-        // 1. Invoke : 함수 지연 호출
+        // Invoke : 함수 지연 호출
         // Invoke(nameof(DestroyProjectile), 2.0f);    // N초 뒤에 "DestoryProejctile"이라는 이름의 함수를 호출하라.
         // Destroy(gameObject, 2.0f);                  // N초 뒤에 gameobject를 삭제한다.
-        destroyTime = Time.time + 2.0f;
+        // destroyTime = Time.time + 2.0f;
+
+        // 거리에 따라서 삭제하고 싶다.
         createPosition = transform.position;            // 현재 나의 위치를 저장한다.
     }
     private void Update()
@@ -43,8 +45,7 @@ public class Projectile : MonoBehaviour
         // 로컬 좌표 : 나를 기준으로 변하는 상대적 위치.
         // Time.deltaTime : 프레임 타임.
 
-        Vector3 direction = transform.up;                               // 내 기준 위쪽.
-        transform.position += direction * moveSpeed * Time.deltaTime;   // direction 방향으로 초당 moveSpeed미터 움직인다.
+        transform.position += transform.up * moveSpeed * Time.deltaTime;   // direction 방향으로 초당 moveSpeed미터 움직인다.
 
         // Time.time은 게임이 시작되고 지금까지 흐른 시간을 담고있다.
         /*
